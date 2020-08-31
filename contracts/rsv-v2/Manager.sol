@@ -7,6 +7,7 @@ import "./rsv/IRSV.sol";
 import "./ownership/OwnableV2.sol";
 import "./Basket.sol";
 import "./Proposal.sol";
+import "./LockerFactory.sol";
 
 
 interface IVault {
@@ -61,11 +62,11 @@ contract Manager is OwnableV2 {
 
     // ROLES
 
-    // Manager is already OwnableV2, but in addition it also has an `operator`.
+    // Manager is already Ownable, but in addition it also has an `operator`.
     address public operator;
+    LockerFactory public lockerFactory;
 
     // DATA
-
     Basket public trustedBasket;
     IVault public trustedVault;
     IRSV public trustedRSV;
@@ -128,7 +129,8 @@ contract Manager is OwnableV2 {
         address proposalFactoryAddr,
         address basketAddr,
         address operatorAddr,
-        uint256 _seigniorage) public
+        uint256 _seigniorage,
+        LockerFactory _lockerFactory) public
     {
         require(_seigniorage <= 1000, "max seigniorage 10%");
         trustedVault = IVault(vaultAddr);
@@ -137,6 +139,7 @@ contract Manager is OwnableV2 {
         trustedBasket = Basket(basketAddr);
         operator = operatorAddr;
         seigniorage = _seigniorage;
+        lockerFactory = _lockerFactory;
         emergency = true; // it's not an emergency, but we want everything to start paused.
     }
 
@@ -165,6 +168,11 @@ contract Manager is OwnableV2 {
         require(isFullyCollateralized(), "undercollateralized");
         _;
         assert(isFullyCollateralized());
+    }
+
+    modifier onlyLockerFactory() {
+      require(_msgSender() == address(lockerFactory));
+      _;
     }
 
     // ========================= Public + External ============================
@@ -369,23 +377,24 @@ contract Manager is OwnableV2 {
     function proposeSwap(
         address[] calldata tokens,
         uint256[] calldata amounts, // unit: qToken
-        bool[] calldata toVault
+        bool[] calldata toVault,
+        address proposer
     )
-    external notEmergency vaultCollateralized returns(uint256)
+    external notEmergency vaultCollateralized onlyLockerFactory returns(uint256)
     {
         require(tokens.length == amounts.length && amounts.length == toVault.length,
             "proposeSwap: unequal lengths");
         uint256 proposalID = proposalsLength++;
 
         trustedProposals[proposalID] = trustedProposalFactory.createSwapProposal(
-            _msgSender(),
+            proposer,
             tokens,
             amounts,
             toVault
         );
         trustedProposals[proposalID].acceptOwnership();
 
-        emit SwapProposed(proposalID, _msgSender(), tokens, amounts, toVault);
+        emit SwapProposed(proposalID, proposer, tokens, amounts, toVault);
         return proposalID;
     }
 
@@ -400,8 +409,12 @@ contract Manager is OwnableV2 {
      * Returns the new proposal's ID.
      */
 
-    function proposeWeights(address[] calldata tokens, uint256[] calldata weights)
-    external notEmergency vaultCollateralized returns(uint256)
+    function proposeWeights(
+      address[] calldata tokens,
+      uint256[] calldata weights,
+      address proposer
+    )
+    external notEmergency vaultCollateralized onlyLockerFactory returns(uint256)
     {
         require(tokens.length == weights.length, "proposeWeights: unequal lengths");
         require(tokens.length > 0, "proposeWeights: zero length");
@@ -409,12 +422,12 @@ contract Manager is OwnableV2 {
         uint256 proposalID = proposalsLength++;
 
         trustedProposals[proposalID] = trustedProposalFactory.createWeightProposal(
-            _msgSender(),
+            proposer,
             new Basket(Basket(0), tokens, weights)
         );
         trustedProposals[proposalID].acceptOwnership();
 
-        emit WeightsProposed(proposalID, _msgSender(), tokens, weights);
+        emit WeightsProposed(proposalID, proposer, tokens, weights);
         return proposalID;
     }
 
@@ -427,13 +440,7 @@ contract Manager is OwnableV2 {
 
     /// Cancels a proposal. This can be done anytime before it is enacted by any of:
     /// 1. Proposer 2. Operator 3. Owner
-    function cancelProposal(uint256 id) external notEmergency vaultCollateralized {
-        require(
-            _msgSender() == trustedProposals[id].proposer() ||
-            _msgSender() == owner() ||
-            _msgSender() == operator,
-            "cannot cancel"
-        );
+    function cancelProposal(uint256 id) external notEmergency vaultCollateralized onlyLockerFactory {
         require(proposalsLength > id, "proposals length <= id");
         trustedProposals[id].cancel();
         emit ProposalCanceled(id, trustedProposals[id].proposer(), _msgSender());
