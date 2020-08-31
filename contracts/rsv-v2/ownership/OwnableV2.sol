@@ -12,7 +12,7 @@ import "../zeppelin/GSN/Context.sol";
  * This contract is loosely based off of https://git.io/JenNF but additionally requires new owners
  * to accept ownership before the transition occurs.
  */
-contract Ownable is Context {
+contract OwnableV2 is Context {
     address private _owner;
     address private _nominatedOwner;
 

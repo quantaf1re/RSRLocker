@@ -1,16 +1,16 @@
 pragma solidity 0.5.7;
 
 /**
- * @dev Elliptic Curve Digital Signature Algorithm (ECDSA) operations.
+ * @dev Elliptic Curve Digital Signature Algorithm (ECDSAV2) operations.
  *
  * These functions can be used to verify that a message was signed by the holder
  * of the private keys of a given address.
  *
- * All credit to OpenZeppelin. Taken from: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/cryptography/ECDSA.sol at commit 65e4ffde586ec89af3b7e9140bdc9235d1254853.
+ * All credit to OpenZeppelin. Taken from: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/cryptography/ECDSAV2.sol at commit 65e4ffde586ec89af3b7e9140bdc9235d1254853.
  *
- * Note that the solidity version has been changed from ^0.6.0 to 0.5.7. 
+ * Note that the solidity version has been changed from ^0.6.0 to 0.5.7.
  */
-library ECDSA {
+library ECDSAV2 {
     /**
      * @dev Returns the address that signed a hashed message (`hash`) with
      * `signature`. This address can then be used for verification purposes.
@@ -28,7 +28,7 @@ library ECDSA {
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
         // Check the signature length
         if (signature.length != 65) {
-            revert("ECDSA: invalid signature length");
+            revert("ECDSAV2: invalid signature length");
         }
 
         // Divide the signature in r, s and v variables
@@ -55,16 +55,16 @@ library ECDSA {
         // vice versa. If your library also generates signatures with 0/1 for v instead 27/28, add 27 to v to accept
         // these malleable signatures as well.
         if (uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0) {
-            revert("ECDSA: invalid signature 's' value");
+            revert("ECDSAV2: invalid signature 's' value");
         }
 
         if (v != 27 && v != 28) {
-            revert("ECDSA: invalid signature 'v' value");
+            revert("ECDSAV2: invalid signature 'v' value");
         }
 
         // If the signature is valid (and not malleable), return the signer address
         address signer = ecrecover(hash, v, r, s);
-        // require(signer != address(0), "ECDSA: invalid signature");
+        // require(signer != address(0), "ECDSAV2: invalid signature");
 
         return signer;
     }

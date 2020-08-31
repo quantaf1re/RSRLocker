@@ -1,17 +1,17 @@
 pragma solidity 0.5.7;
 
-import "./zeppelin/token/ERC20/SafeERC20.sol";
+import "./zeppelin/token/ERC20/SafeERC20V2.sol";
 import "./zeppelin/token/ERC20/IERC20.sol";
-import "./zeppelin/math/SafeMath.sol";
-import "./ownership/Ownable.sol";
+import "./zeppelin/math/SafeMathV2.sol";
+import "./ownership/OwnableV2.sol";
 
 /**
 * The Vault contract has an owner who is able to set the manager. The manager is
-* able to perform withdrawals. 
+* able to perform withdrawals.
 */
-contract Vault is Ownable {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
+contract Vault is OwnableV2 {
+    using SafeMathV2 for uint256;
+    using SafeERC20V2 for IERC20;
 
     address public manager;
 
@@ -38,7 +38,7 @@ contract Vault is Ownable {
         _;
     }
 
-    /// Changes `manager` account. 
+    /// Changes `manager` account.
     function changeManager(address newManager) external onlyOwner {
         require(newManager != address(0), "cannot be 0 address");
         emit ManagerTransferred(manager, newManager);

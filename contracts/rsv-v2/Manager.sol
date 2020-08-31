@@ -1,10 +1,10 @@
 pragma solidity 0.5.7;
 
-import "./zeppelin/token/ERC20/SafeERC20.sol";
+import "./zeppelin/token/ERC20/SafeERC20V2.sol";
 import "./zeppelin/token/ERC20/IERC20.sol";
-import "./zeppelin/math/SafeMath.sol";
+import "./zeppelin/math/SafeMathV2.sol";
 import "./rsv/IRSV.sol";
-import "./ownership/Ownable.sol";
+import "./ownership/OwnableV2.sol";
 import "./Basket.sol";
 import "./Proposal.sol";
 
@@ -55,13 +55,13 @@ interface IVault {
  *
  * Note that we _never_ reason in units of Tokens or attoTokens.
  */
-contract Manager is Ownable {
-    using SafeERC20 for IERC20;
-    using SafeMath for uint256;
+contract Manager is OwnableV2 {
+    using SafeERC20V2 for IERC20;
+    using SafeMathV2 for uint256;
 
     // ROLES
 
-    // Manager is already Ownable, but in addition it also has an `operator`.
+    // Manager is already OwnableV2, but in addition it also has an `operator`.
     address public operator;
 
     // DATA

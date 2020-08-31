@@ -1,7 +1,7 @@
 pragma solidity 0.5.7;
 
-import "../ownership/Ownable.sol";
-import "../zeppelin/math/SafeMath.sol";
+import "../ownership/OwnableV2.sol";
+import "../zeppelin/math/SafeMathV2.sol";
 
 /**
  * @title Eternal Storage for the Reserve Token
@@ -14,9 +14,9 @@ import "../zeppelin/math/SafeMath.sol";
  * The use of this contract does not imply that Reserve will choose to do a future upgrade, nor
  * that any future upgrades will necessarily re-use this storage. It merely provides option value.
  */
-contract ReserveEternalStorage is Ownable {
+contract ReserveEternalStorage is OwnableV2 {
 
-    using SafeMath for uint256;
+    using SafeMathV2 for uint256;
 
 
     // ===== auth =====

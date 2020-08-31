@@ -1,8 +1,8 @@
 pragma solidity 0.5.7;
 
 import "../zeppelin/token/ERC20/IERC20.sol";
-import "../zeppelin/math/SafeMath.sol";
-import "../ownership/Ownable.sol";
+import "../zeppelin/math/SafeMathV2.sol";
+import "../ownership/OwnableV2.sol";
 import "./ReserveEternalStorage.sol";
 
 /**
@@ -19,8 +19,8 @@ import "./ReserveEternalStorage.sol";
  *
  * Non-constant-sized data is held in ReserveEternalStorage, to facilitate potential future upgrades.
  */
-contract Reserve is IERC20, Ownable {
-    using SafeMath for uint256;
+contract Reserve is IERC20, OwnableV2 {
+    using SafeMathV2 for uint256;
 
 
     // ==== State ====
@@ -289,11 +289,11 @@ contract Reserve is IERC20, Ownable {
     }
 
     // ==== Relay functions === //
-    
+
     /// Transfer `value` attotokens from `from` to `to`.
     /// Callable only by the relay contract.
-    function relayTransfer(address from, address to, uint256 value) 
-        external 
+    function relayTransfer(address from, address to, uint256 value)
+        external
         notPaused
         only(trustedRelayer)
         returns (bool)
@@ -304,8 +304,8 @@ contract Reserve is IERC20, Ownable {
 
     /// Approve `value` attotokens to be spent by `spender` from `holder`.
     /// Callable only by the relay contract.
-    function relayApprove(address holder, address spender, uint256 value) 
-        external 
+    function relayApprove(address holder, address spender, uint256 value)
+        external
         notPaused
         only(trustedRelayer)
         returns (bool)
@@ -317,8 +317,8 @@ contract Reserve is IERC20, Ownable {
     /// `spender` transfers `value` attotokens from `holder` to `to`.
     /// Requires allowance.
     /// Callable only by the relay contract.
-    function relayTransferFrom(address holder, address spender, address to, uint256 value) 
-        external 
+    function relayTransferFrom(address holder, address spender, address to, uint256 value)
+        external
         notPaused
         only(trustedRelayer)
         returns (bool)
@@ -369,7 +369,7 @@ contract Reserve is IERC20, Ownable {
 
 // ===========================  Upgradeability   =====================================
 
-    /// Accept upgrade from previous RSV instance. Can only be called once. 
+    /// Accept upgrade from previous RSV instance. Can only be called once.
     function acceptUpgrade(address previousImplementation) external onlyOwner {
         require(address(trustedData) == address(0), "can only be run once");
         Reserve previous = Reserve(previousImplementation);
@@ -379,7 +379,7 @@ contract Reserve is IERC20, Ownable {
         totalSupply = previous.totalSupply();
         maxSupply = previous.maxSupply();
         emit MaxSupplyChanged(maxSupply);
-        
+
         // Unpause.
         paused = false;
         emit Unpaused(pauser);

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol";
+import "./openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "./openzeppelin-solidity/contracts/token/ERC20/ERC20Pausable.sol";
 
 contract ReserveRightsToken is ERC20Pausable {
   string public name = "Reserve Rights";

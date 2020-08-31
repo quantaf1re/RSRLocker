@@ -1,9 +1,9 @@
 pragma solidity 0.5.7;
 
 import "./zeppelin/token/ERC20/IERC20.sol";
-import "./zeppelin/token/ERC20/SafeERC20.sol";
+import "./zeppelin/token/ERC20/SafeERC20V2.sol";
 import "./rsv/IRSV.sol";
-import "./ownership/Ownable.sol";
+import "./ownership/OwnableV2.sol";
 import "./Basket.sol";
 
 /**
@@ -65,16 +65,16 @@ contract ProposalFactory is IProposalFactory {
     }
 }
 
-contract Proposal is IProposal, Ownable {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
+contract Proposal is IProposal, OwnableV2 {
+    using SafeMathV2 for uint256;
+    using SafeERC20V2 for IERC20;
 
     uint256 public time;
     address public proposer;
 
     enum State { Created, Accepted, Cancelled, Completed }
     State public state;
-    
+
     event ProposalCreated(address indexed proposer);
     event ProposalAccepted(address indexed proposer, uint256 indexed time);
     event ProposalCancelled(address indexed proposer);
@@ -149,7 +149,7 @@ contract WeightProposal is Proposal {
  * solves for the new resultant basket later.
  *
  * When this proposal is completed, it calculates what the weights for the new basket will be
- * and returns it. If RSV supply is 0, this kind of Proposal cannot be used. 
+ * and returns it. If RSV supply is 0, this kind of Proposal cannot be used.
  */
 
 // On "unit" comments, see comment at top of Manager.sol.
@@ -197,7 +197,7 @@ contract SwapProposal is Proposal {
                 // Manager._executeBasketShift(), it's possible for the naive implementation of
                 // this mechanism to overspend the proposer's tokens by 1 qToken. We avoid that,
                 // here, by making the effective proposal one less. Yeah, it's pretty fiddly.
-                
+
                 weights[i] = oldWeight.add( (amounts[i].sub(1)).mul(scaleFactor).div(rsvSupply) );
                 //unit: aqToken/RSV == aqToken/RSV == [qToken] * [aqToken/qToken*qRSV/RSV] / [qRSV]
             } else {
@@ -210,5 +210,3 @@ contract SwapProposal is Proposal {
         // unit check for weights: aqToken/RSV
     }
 }
-
-

@@ -1,15 +1,15 @@
 pragma solidity 0.5.7;
 
 import "./IRSV.sol";
-import "../ownership/Ownable.sol";
-import "../zeppelin/utils/ECDSA.sol";
+import "../ownership/OwnableV2.sol";
+import "../zeppelin/utils/ECDSAV2.sol";
 
 /**
  * @title The Reserve Relayer Contract
- * @dev A contract to support metatransactions via ECDSA signature verification.
+ * @dev A contract to support metatransactions via ECDSAV2 signature verification.
  *
  */
-contract Relayer is Ownable {
+contract Relayer is OwnableV2 {
 
     IRSV public trustedRSV;
     mapping(address => uint) public nonce;
@@ -78,7 +78,7 @@ contract Relayer is Ownable {
         _takeFee(from, fee);
 
         require(
-            trustedRSV.relayTransfer(from, to, amount), 
+            trustedRSV.relayTransfer(from, to, amount),
             "Reserve.sol relayTransfer failed"
         );
         emit TransferForwarded(sig, from, to, amount, fee);
@@ -112,7 +112,7 @@ contract Relayer is Ownable {
         _takeFee(holder, fee);
 
         require(
-            trustedRSV.relayApprove(holder, spender, amount), 
+            trustedRSV.relayApprove(holder, spender, amount),
             "Reserve.sol relayApprove failed"
         );
         emit ApproveForwarded(sig, holder, spender, amount, fee);
@@ -149,7 +149,7 @@ contract Relayer is Ownable {
         _takeFee(spender, fee);
 
         require(
-            trustedRSV.relayTransferFrom(holder, spender, to, amount), 
+            trustedRSV.relayTransferFrom(holder, spender, to, amount),
             "Reserve.sol relayTransfer failed"
         );
         emit TransferFromForwarded(sig, holder, spender, to, amount, fee);
@@ -160,8 +160,8 @@ contract Relayer is Ownable {
         internal pure
         returns (address)
     {
-        bytes32 ethMessageHash = ECDSA.toEthSignedMessageHash(hash);
-        return ECDSA.recover(ethMessageHash, sig);
+        bytes32 ethMessageHash = ECDSAV2.toEthSignedMessageHash(hash);
+        return ECDSAV2.recover(ethMessageHash, sig);
     }
 
     /// Transfer a fee from payer to sender.

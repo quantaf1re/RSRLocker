@@ -1,8 +1,8 @@
 pragma solidity 0.5.7;
 
 import "./IERC20.sol";
-import "../../math/SafeMath.sol";
-import "../../utils/Address.sol";
+import "../../math/SafeMathV2.sol";
+import "../../utils/AddressV2.sol";
 
 /**
  * @title SafeERC20
@@ -13,9 +13,9 @@ import "../../utils/Address.sol";
  * To use this library you can add a `using SafeERC20 for ERC20;` statement to your contract,
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
-library SafeERC20 {
-    using SafeMath for uint256;
-    using Address for address;
+library SafeERC20V2 {
+    using SafeMathV2 for uint256;
+    using AddressV2 for address;
 
     function safeTransfer(IERC20 token, address to, uint256 value) internal {
         callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
