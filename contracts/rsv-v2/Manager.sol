@@ -384,6 +384,7 @@ contract Manager is OwnableV2 {
     {
         require(tokens.length == amounts.length && amounts.length == toVault.length,
             "proposeSwap: unequal lengths");
+        require(proposer != address(0), "invalid address");
         uint256 proposalID = proposalsLength++;
 
         trustedProposals[proposalID] = trustedProposalFactory.createSwapProposal(
@@ -418,6 +419,7 @@ contract Manager is OwnableV2 {
     {
         require(tokens.length == weights.length, "proposeWeights: unequal lengths");
         require(tokens.length > 0, "proposeWeights: zero length");
+        require(proposer != address(0), "invalid address");
 
         uint256 proposalID = proposalsLength++;
 

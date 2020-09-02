@@ -12,38 +12,50 @@ contract LockerFactory is OwnableV2 {
   using SafeMathV2 for uint256;
 
   IERC20 public RSR;
-  uint256 public lockLength;
-  uint256 public amountRSRToLock;
-  mapping (uint256 => Locker) public proposalIDToLocker;
+  uint256 public lockTime;
+  uint256 public RSRAmountToLock;
   Manager public manager;
+  mapping (uint256 => Locker) public proposalIDToLocker;
+
+  // TODO: add events
+  // TODO: format comments
+  // add tests for things that should revert
+  // add comments on units to mirror `manager`
 
 
   constructor(
     IERC20 _RSR,
-    uint256 _lockLength,
-    uint256 _amountRSRToLock
+    uint256 _lockTime,
+    uint256 _RSRAmountToLock
   ) public {
     RSR = _RSR;
-    lockLength = _lockLength;
-    amountRSRToLock = _amountRSRToLock;
+    lockTime = _lockTime;
+    RSRAmountToLock = _RSRAmountToLock;
   }
-
 
 
   // ========================= Public + External ============================
+  ///
+  function setRSR(IERC20 _RSR) external onlyOwner {
+    require(address(_RSR) != address(0), "invalid address");
+    RSR = _RSR;
+  }
 
-  /// Set the lockLength.
-  function setLockLength(uint256 _lockLength) external onlyOwner {
-    lockLength = _lockLength;
+  /// Set the lockTime.
+  function setLockTime(uint256 _lockTime) external onlyOwner {
+    require(_lockTime != 0, "invalid time");
+    lockTime = _lockTime;
   }
 
   ///
-  function setAmountRSRToLock(uint256 _amountRSRToLock) external onlyOwner {
-    amountRSRToLock = _amountRSRToLock;
+  function setRSRAmountToLock(uint256 _RSRAmountToLock) external onlyOwner {
+    require(_RSRAmountToLock != 0, "invalid amount");
+    RSRAmountToLock = _RSRAmountToLock;
   }
 
   ///
   function setManager(Manager _manager) external onlyOwner {
+    require(address(_manager) != address(0), "invalid address");
     manager = _manager;
   }
 
@@ -56,13 +68,13 @@ contract LockerFactory is OwnableV2 {
       _msgSender(),
       now,
       RSR,
-      lockLength
+      lockTime
     );
 
     RSR.safeTransferFrom(
       _msgSender(),
       address(locker),
-      amountRSRToLock
+      RSRAmountToLock
     );
 
     return locker;
@@ -73,6 +85,7 @@ contract LockerFactory is OwnableV2 {
     uint256[] calldata amounts, // unit: qToken
     bool[] calldata toVault
   ) external {
+    // No need to repeat the same require statements that are in `manager`
     Locker locker = _lock();
 
     uint256 proposalID = manager.proposeSwap(
@@ -89,6 +102,7 @@ contract LockerFactory is OwnableV2 {
     address[] calldata tokens,
     uint256[] calldata weights
   ) external {
+    // No need to repeat the same require statements that are in `manager`
     Locker locker = _lock();
 
     uint256 proposalID = manager.proposeWeights(
