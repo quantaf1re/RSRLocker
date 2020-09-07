@@ -171,7 +171,7 @@ contract Manager is OwnableV2 {
     }
 
     modifier onlyLockerFactory() {
-      require(_msgSender() == address(lockerFactory));
+      require(_msgSender() == address(lockerFactory), "only locker factory");
       _;
     }
 
@@ -380,7 +380,7 @@ contract Manager is OwnableV2 {
         bool[] calldata toVault,
         address proposer
     )
-    external notEmergency vaultCollateralized onlyLockerFactory returns(uint256)
+    external onlyLockerFactory notEmergency vaultCollateralized returns(uint256)
     {
         require(tokens.length == amounts.length && amounts.length == toVault.length,
             "proposeSwap: unequal lengths");
@@ -415,7 +415,7 @@ contract Manager is OwnableV2 {
       uint256[] calldata weights,
       address proposer
     )
-    external notEmergency vaultCollateralized onlyLockerFactory returns(uint256)
+    external onlyLockerFactory notEmergency vaultCollateralized  returns(uint256)
     {
         require(tokens.length == weights.length, "proposeWeights: unequal lengths");
         require(tokens.length > 0, "proposeWeights: zero length");
@@ -442,7 +442,7 @@ contract Manager is OwnableV2 {
 
     /// Cancels a proposal. This can be done anytime before it is enacted by any of:
     /// 1. Proposer 2. Operator 3. Owner
-    function cancelProposal(uint256 id) external notEmergency vaultCollateralized onlyLockerFactory {
+    function cancelProposal(uint256 id) external onlyLockerFactory notEmergency vaultCollateralized {
         require(proposalsLength > id, "proposals length <= id");
         trustedProposals[id].cancel();
         emit ProposalCanceled(id, trustedProposals[id].proposer(), _msgSender());

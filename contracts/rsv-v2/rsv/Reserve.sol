@@ -264,6 +264,8 @@ contract Reserve is IERC20, OwnableV2 {
         return true;
     }
 
+    event Test(uint256 indexed val0);
+
     /// Mint `value` new attotokens to `account`.
     function mint(address account, uint256 value)
         external
@@ -273,6 +275,7 @@ contract Reserve is IERC20, OwnableV2 {
         require(account != address(0), "can't mint to address zero");
 
         totalSupply = totalSupply.add(value);
+        emit Test(totalSupply);
         require(totalSupply < maxSupply, "max supply exceeded");
         trustedData.addBalance(account, value);
         emit Transfer(address(0), account, value);
