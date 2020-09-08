@@ -19,12 +19,12 @@ def test_acceptProposal_executeProposal(a, ics, lockerSwapAccepted, lockerWeight
         else:
             proposal = WeightProposal.at(ics.manager.trustedProposals(1))
         assert proposal.state() == consts.STATE_TO_NUM["Accepted"]
-        originalBasket = Basket.at(ics.manager.trustedBasket())
+        original_basket = Basket.at(ics.manager.trustedBasket())
 
         ics.manager.executeProposal(locker.proposalID(), {'from': a.at(ics.manager.operator())})
 
         assert proposal.state() == consts.STATE_TO_NUM["Completed"]
-        assert originalBasket.address != Basket.at(ics.manager.trustedBasket()).address
+        assert original_basket.address != Basket.at(ics.manager.trustedBasket()).address
 
 
 # `executeProposal` should fail if the 24h has not passed

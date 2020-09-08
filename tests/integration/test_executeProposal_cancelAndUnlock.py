@@ -7,7 +7,7 @@ from brownie.test import given, strategy
 # +1 because of `>` rather than `>=` in `require(now > time, "wait to execute");'
 @given(delay=strategy(
     "uint256",
-    min_value=consts.SECONDS_24H+1, 
+    min_value=consts.SECONDS_24H+1,
     max_value=consts.SECONDS_1Y
 ))
 def test_executeProposal_cancelAndUnlock_revert(a, ics, lockerSwapAccepted, lockerWeightsAccepted, delay):
@@ -19,7 +19,7 @@ def test_executeProposal_cancelAndUnlock_revert(a, ics, lockerSwapAccepted, lock
         else:
             proposal = WeightProposal.at(ics.manager.trustedProposals(1))
         assert proposal.state() == consts.STATE_TO_NUM["Accepted"]
-        originalBasket = Basket.at(ics.manager.trustedBasket())
+        original_basket = Basket.at(ics.manager.trustedBasket())
 
         ics.manager.executeProposal(locker.proposalID(), {'from': a.at(ics.manager.operator())})
         assert proposal.state() == consts.STATE_TO_NUM["Completed"]
@@ -27,5 +27,5 @@ def test_executeProposal_cancelAndUnlock_revert(a, ics, lockerSwapAccepted, lock
         with reverts():
             ics.locker_factory.cancelAndUnlock(locker.proposalID(), {'from': a.at(locker.proposer())})
 
-        assert originalBasket.address != Basket.at(ics.manager.trustedBasket()).address
+        assert original_basket.address != Basket.at(ics.manager.trustedBasket()).address
         assert proposal.state() == consts.STATE_TO_NUM["Completed"]

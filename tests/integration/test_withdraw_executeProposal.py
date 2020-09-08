@@ -27,7 +27,7 @@ def withdraw_executeProposal(a, ics, locker, proposal_start_state):
     assert ics.locker_factory.proposalIDToLocker(proposal_id) == locker.address
     assert ics.locker_factory.lockerAddrToProposalID(locker.address) == proposal_id
     assert proposal.state() == consts.STATE_TO_NUM[proposal_start_state]
-    originalBasket = Basket.at(ics.manager.trustedBasket())
+    original_basket = Basket.at(ics.manager.trustedBasket())
 
     if proposal_start_state == "Created":
         ics.manager.acceptProposal(proposal_id, {"from": a.at(ics.manager.operator())})
@@ -36,7 +36,7 @@ def withdraw_executeProposal(a, ics, locker, proposal_start_state):
 
     ics.manager.executeProposal(locker.proposalID(), {'from': a.at(ics.manager.operator())})
 
-    assert originalBasket.address != Basket.at(ics.manager.trustedBasket()).address
+    assert original_basket.address != Basket.at(ics.manager.trustedBasket()).address
     assert proposal.state() == consts.STATE_TO_NUM["Completed"]
 
 
