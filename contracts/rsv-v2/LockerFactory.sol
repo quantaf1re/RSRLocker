@@ -149,9 +149,6 @@ contract LockerFactory is OwnableV2 {
     manager.cancelProposal(proposalID);
     Locker locker = proposalIDToLocker[proposalID];
     locker.withdraw();
-    // Clean up. Maybe these shouldn't be deleted for records? Debatable.
-    delete proposalIDToLocker[proposalID];
-    delete lockerAddrToProposalID[address(locker)];
   }
 
 

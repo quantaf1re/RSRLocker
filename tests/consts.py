@@ -6,3 +6,7 @@ MAX_NUM_TEST_REPS = 50
 SECONDS_24H = 86400 # 1 day in seconds
 SECONDS_1Y = 31536000 # 1 year in seconds
 STATE_TO_NUM = {"Created": 0, "Accepted": 1, "Cancelled": 2, "Completed":3}
+CREATED = "Created"
+ACCEPTED = "Accepted"
+CANCELLED = "Cancelled"
+COMPLETED = "Completed"
