@@ -141,8 +141,9 @@ class _ICs():
                 self.id_to_state[proposal_id] == CREATED and
                 signer == self.ics.manager.operator()):
 
-            self.ics.manager.acceptProposal(proposal_id, {"from": signer})
+            tx = self.ics.manager.acceptProposal(proposal_id, {"from": signer})
             self.id_to_state[proposal_id] = ACCEPTED
+            self.id_to_accept_time[proposal_id] = tx.timestamp
 
         else:
             with reverts():
@@ -157,7 +158,7 @@ class _ICs():
         if (proposal_id in self.id_to_state and
                 self.id_to_state[proposal_id] == ACCEPTED and
                 signer == self.ics.manager.operator() and
-                chain.time() - self.id_to_locker[proposal_id].startTime() > SECONDS_24H):
+                chain.time() - self.id_to_accept_time[proposal_id] > SECONDS_24H):
 
             self.ics.manager.executeProposal(proposal_id, {"from": signer})
             self.id_to_state[proposal_id] = COMPLETED
@@ -169,7 +170,10 @@ class _ICs():
     # Call withdraw if:
     #  - 30d have passed
     def withdraw(self, proposal_id, signer):
-        if proposal_id in self.id_to_locker and chain.time() - self.id_to_locker[proposal_id].startTime() > self.ics.locker_factory.lockTime():
+        if (proposal_id in self.id_to_locker and
+                chain.time() - self.id_to_start_time[proposal_id] >
+                        self.ics.locker_factory.lockTime()):
+
             locker = self.id_to_locker[proposal_id]
             bal = self.ics.rsr.balanceOf(locker.address)
             if bal != 0:

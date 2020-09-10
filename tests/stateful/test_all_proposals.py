@@ -30,8 +30,9 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
             # and `No account exists for ___` when using contracts as accounts
             self.rsr_bals = {str(ac): 10**47 for ac in self.a}
             self.id_to_state = {}
-            self.id_to_start_time = {}
             self.id_to_locker = {}
+            self.id_to_start_time = {}
+            self.id_to_accept_time = {}
 
 
         # ---------------------- Rules ----------------------

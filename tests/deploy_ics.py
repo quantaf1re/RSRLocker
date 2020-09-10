@@ -211,7 +211,7 @@ def deploy_ics():
     # So everyone can create proposals
     tokens = [rsr] + other_stablecoins + [usdc, tusd, pax]
     for token in tokens:
-        for j in range(1, 10):
+        for j in range(1, len(a)):
             token.transfer(a[j], 1e47, owner_signer)
 
 
