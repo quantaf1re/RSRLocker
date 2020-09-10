@@ -96,6 +96,7 @@ contract Manager is OwnableV2 {
     event IssuancePausedChanged(bool indexed oldVal, bool indexed newVal);
     event EmergencyChanged(bool indexed oldVal, bool indexed newVal);
     event OperatorChanged(address indexed oldAccount, address indexed newAccount);
+    event LockerFactoryChanged(LockerFactory indexed oldFactory, LockerFactory indexed newFactory);
     event SeigniorageChanged(uint256 oldVal, uint256 newVal);
     event VaultChanged(address indexed oldVaultAddr, address indexed newVaultAddr);
     event DelayChanged(uint256 oldVal, uint256 newVal);
@@ -218,6 +219,13 @@ contract Manager is OwnableV2 {
     function setDelay(uint256 _delay) external onlyOwner {
         emit DelayChanged(delay, _delay);
         delay = _delay;
+    }
+
+    /// Set lockerFactory
+    function setLockerFactory(LockerFactory _lockerFactory) external onlyOwner {
+        require(address(_lockerFactory) != address(0), "invalid address");
+        emit LockerFactoryChanged(lockerFactory, _lockerFactory);
+        lockerFactory = _lockerFactory;
     }
 
     /// Ensure that the Vault is fully collateralized.  That this is true should be an

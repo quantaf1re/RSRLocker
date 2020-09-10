@@ -27,6 +27,4 @@ def cancelAndUnlock(a, ics, locker, signer, state_at_start):
         assert ics.rsr.balanceOf(proposer) == start_bal_proposer + consts.INITIAL_RSR_AMOUNT_TO_LOCK
         assert ics.rsr.balanceOf(signer) == start_bal_signer
     assert ics.rsr.balanceOf(locker.address) == 0
-    assert ics.locker_factory.proposalIDToLocker(proposal_id) == consts.ZERO_ADDRESS
-    assert ics.locker_factory.lockerAddrToProposalID(locker.address) == 0
     assert proposal.state() == consts.STATE_TO_NUM["Cancelled"]

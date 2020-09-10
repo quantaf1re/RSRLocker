@@ -19,7 +19,7 @@ def test_setRSR(a, ics, new_RSR_addr):
     assert tx.events["RSRChanged"][0]["newAddr"] == new_RSR_addr
 
 
-def  test_setRSR_revert(a, ics):
+def test_setRSR_revert(a, ics):
     with reverts("invalid address"):
         ics.locker_factory.setRSR(consts.ZERO_ADDRESS, {"from": a[0]})
 
