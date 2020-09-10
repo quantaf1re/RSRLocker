@@ -39,4 +39,4 @@ The only issues found other than the ones found with MythX were:
  - `owner() should be declared external` in `rsv-v2/ownership/OwnableV2.sol`, but that's outside of the scope of this project
 
 ### Manticore
-I haven't gone into too much detail with Manticore, but from some initial tests, the only warning are about the use of time (`now` etc) in the contracts, same as the above tools.
+I haven't gone into too much detail with Manticore, but from some initial tests, the only warning is about the use of time (`now` etc) in the contracts, same as the above tools.
