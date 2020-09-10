@@ -40,18 +40,22 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
         # proposeSwap
 
         def rule_lock_and_propose_swap_single_0(self, st_uint_usdc, st_addr):
-            self.lock_and_propose_swap_single(self.ics.usdc, self.ics.other_sc_a, st_uint_usdc, st_addr)
+            self.lock_and_propose_swap_single(
+                self.ics.usdc, self.ics.other_sc_a, st_uint_usdc, st_addr)
 
         def rule_lock_and_propose_swap_single_1(self, st_uint, st_addr):
-            self.lock_and_propose_swap_single(self.ics.tusd, self.ics.other_sc_b, st_uint, st_addr)
+            self.lock_and_propose_swap_single(
+                self.ics.tusd, self.ics.other_sc_b, st_uint, st_addr)
 
         # proposeWeights
 
         def rule_lock_and_propose_weights_0(self, st_addr):
-            self.lock_and_propose_weights([self.ics.other_sc_a, self.ics.other_sc_b, self.ics.other_sc_c], st_addr)
+            self.lock_and_propose_weights(
+                [self.ics.other_sc_a, self.ics.other_sc_b, self.ics.other_sc_c], st_addr)
 
         def rule_lock_and_propose_weights_1(self, st_addr):
-            self.lock_and_propose_weights([self.ics.usdc, self.ics.other_sc_b, self.ics.other_sc_c], st_addr)
+            self.lock_and_propose_weights(
+                [self.ics.usdc, self.ics.other_sc_b, self.ics.other_sc_c], st_addr)
 
         # cancelProposal
 

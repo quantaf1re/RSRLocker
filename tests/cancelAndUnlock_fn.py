@@ -4,6 +4,7 @@ from brownie import SwapProposal, WeightProposal
 
 # Checks that `cancelAndUnlock` results in the correct changes to RSR balances
 # and state of the proposal.
+# It's in this directory so that it can be used in multiple sub-direectories
 # WARNING: CAN ONLY BE USED BEFORE A WITHDRAWAL
 def cancelAndUnlock(a, ics, locker, signer, state_at_start):
     # These are the same when signer == proposer obviously

@@ -30,7 +30,12 @@ class _ICs():
         self.id_to_state[proposal_id] = CREATED
         self.id_to_start_time[proposal_id] = tx.timestamp
         self.id_to_locker[proposal_id] = locker
-        self.transfer_bals(self.rsr_bals, proposer, tx.return_value, self.ics.locker_factory.RSRAmountToLock())
+        self.transfer_bals(
+            self.rsr_bals,
+            proposer,
+            tx.return_value,
+            self.ics.locker_factory.RSRAmountToLock()
+        )
 
     # Call lockAndProposeSwap and approve tokens that need to be approved for
     # execution to be successful only if:
@@ -39,7 +44,8 @@ class _ICs():
     #  - the vault has enough tokens to execute the swap
     #  - the proposer has enough rsr to lock up
     def lock_and_propose_swap_single(self, token_out_vault, token_to_vault, amount_to_swap, proposer):
-        enough_tokens_proposer = token_to_vault.allowance(proposer, self.ics.manager.address) + amount_to_swap <= token_to_vault.balanceOf(proposer)
+        enough_tokens_proposer = (token_to_vault.allowance(proposer, self.ics.manager.address) +
+            amount_to_swap <= token_to_vault.balanceOf(proposer))
         # Check whether the vault has enough tokens to swap when executed
         enough_tokens_vault = token_out_vault.balanceOf(self.ics.manager.trustedVault())
         enough_rsr = (self.ics.rsr.allowance(proposer, self.ics.manager.address) +
@@ -47,10 +53,18 @@ class _ICs():
                 self.ics.rsr.balanceOf(proposer))
 
         def do_tx():
-            self.ics.rsr.approve(self.ics.locker_factory.address, self.ics.locker_factory.RSRAmountToLock(), {"from": proposer})
+            self.ics.rsr.approve(
+                self.ics.locker_factory.address,
+                self.ics.locker_factory.RSRAmountToLock(),
+                {"from": proposer}
+            )
             # I'm treating other_sc_a as == to usdc, other_sc_b == tusd,
             # and other_sc_c == pax in terms of decimals to simplify things
-            token_to_vault.increaseAllowance(self.ics.manager.address, amount_to_swap, {"from": proposer})
+            token_to_vault.increaseAllowance(
+                self.ics.manager.address,
+                amount_to_swap,
+                {"from": proposer}
+            )
 
             return self.ics.locker_factory.lockAndProposeSwap(
                 [token_out_vault.address, token_to_vault.address],
@@ -74,8 +88,13 @@ class _ICs():
     def lock_and_propose_weights(self, tokens, proposer):
         # Since the basket weights are the same pre and post proposal, we can use this
         amounts = self.ics.manager.toIssue(self.ics.rsv.totalSupply())
-        enough_tokens = all(token.allowance(proposer, self.ics.manager.address) + amount <= token.balanceOf(proposer) for token, amount in zip(tokens, amounts))
-        enough_rsr = self.ics.rsr.allowance(proposer, self.ics.manager.address) + self.ics.locker_factory.RSRAmountToLock() <= self.ics.rsr.balanceOf(proposer)
+        enough_tokens = all(
+            token.allowance(proposer, self.ics.manager.address) +
+            amount <=
+            token.balanceOf(proposer) for token, amount in zip(tokens, amounts))
+        enough_rsr = (self.ics.rsr.allowance(proposer, self.ics.manager.address) +
+            self.ics.locker_factory.RSRAmountToLock() <=
+            self.ics.rsr.balanceOf(proposer))
 
         def do_tx():
             self.ics.rsr.approve(
