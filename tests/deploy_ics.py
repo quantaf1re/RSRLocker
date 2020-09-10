@@ -1,5 +1,5 @@
 from brownie import *
-import consts
+from consts import *
 
 
 class Context:
@@ -40,16 +40,16 @@ def deploy_ics():
     rsr = BasicERC20.deploy(owner_signer)
     locker_factory = LockerFactory.deploy(
         rsr.address,
-        consts.INITIAL_PROPOSAL_LOCK_TIME,
-        consts.INITIAL_RSR_AMOUNT_TO_LOCK,
+        INITIAL_PROPOSAL_LOCK_TIME,
+        INITIAL_RSR_AMOUNT_TO_LOCK,
         owner_signer
     )
 
     proposal_factory = ProposalFactory.deploy(owner_signer)
     basket = Basket.deploy(
-        consts.ZERO_ADDRESS,
+        ZERO_ADDRESS,
         [usdc.address, tusd.address, pax.address],
-        consts.BASKET_WEIGHTS,
+        BASKET_WEIGHTS,
         owner_signer,
     )
     manager = Manager.deploy(
@@ -184,7 +184,7 @@ def deploy_ics():
 
     # Check the entire new RSV state
     assert rsv_2.getEternalStorageAddress() == rsv.getEternalStorageAddress()
-    assert rsv_2.trustedTxFee() == consts.ZERO_ADDRESS
+    assert rsv_2.trustedTxFee() == ZERO_ADDRESS
     assert rsv_2.trustedRelayer() == relayer.address
     assert rsv_2.maxSupply() == rsv.maxSupply()
     assert not rsv_2.paused()
@@ -193,9 +193,9 @@ def deploy_ics():
     assert rsv_2.feeRecipient() == daily.address
 
     # Make sure the bridge is burnt behind us
-    assert rsv.minter() == consts.ZERO_ADDRESS
-    assert rsv.pauser() == consts.ZERO_ADDRESS
-    assert rsv.owner() == consts.ZERO_ADDRESS
+    assert rsv.minter() == ZERO_ADDRESS
+    assert rsv.pauser() == ZERO_ADDRESS
+    assert rsv.owner() == ZERO_ADDRESS
     assert rsv.paused()
 
 

@@ -1,4 +1,4 @@
-import consts
+from consts import *
 from brownie import SwapProposal, WeightProposal
 
 
@@ -16,15 +16,15 @@ def cancelAndUnlock(a, ics, locker, signer, state_at_start):
         proposal = SwapProposal.at(ics.manager.trustedProposals(0))
     else:
         proposal = WeightProposal.at(ics.manager.trustedProposals(1))
-    assert proposal.state() == consts.STATE_TO_NUM[state_at_start]
+    assert proposal.state() == STATE_TO_NUM[state_at_start]
 
 
     ics.locker_factory.cancelAndUnlock(proposal_id, {"from": a.at(signer)})
 
     if signer == proposer:
-        assert ics.rsr.balanceOf(proposer) == start_bal_proposer + consts.INITIAL_RSR_AMOUNT_TO_LOCK
+        assert ics.rsr.balanceOf(proposer) == start_bal_proposer + INITIAL_RSR_AMOUNT_TO_LOCK
     else:
-        assert ics.rsr.balanceOf(proposer) == start_bal_proposer + consts.INITIAL_RSR_AMOUNT_TO_LOCK
+        assert ics.rsr.balanceOf(proposer) == start_bal_proposer + INITIAL_RSR_AMOUNT_TO_LOCK
         assert ics.rsr.balanceOf(signer) == start_bal_signer
     assert ics.rsr.balanceOf(locker.address) == 0
-    assert proposal.state() == consts.STATE_TO_NUM["Cancelled"]
+    assert proposal.state() == STATE_TO_NUM[CANCELLED]

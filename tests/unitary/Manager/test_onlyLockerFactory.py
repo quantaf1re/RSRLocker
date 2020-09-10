@@ -1,4 +1,4 @@
-import consts
+from consts import *
 from brownie import reverts
 from brownie.test import given, strategy
 
@@ -24,7 +24,7 @@ def test_proposeWeights_revert(a, ics):
         with reverts("only locker factory"):
             ics.manager.proposeWeights(
                 [ics.other_sc_a, ics.other_sc_b, ics.other_sc_c],
-                consts.BASKET_WEIGHTS,
+                BASKET_WEIGHTS,
                 signer,
                 {"from": signer}
             )

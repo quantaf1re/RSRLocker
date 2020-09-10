@@ -1,4 +1,4 @@
-import consts
+from consts import *
 from brownie import a, reverts, chain
 from brownie.test import given, strategy
 
@@ -10,8 +10,8 @@ from brownie.test import given, strategy
 # max_value == 1 year, brownie throws an error when delay is too large
 @given(delay=strategy(
     "uint256",
-    min_value=consts.INITIAL_PROPOSAL_LOCK_TIME+1,
-    max_value=consts.SECONDS_1Y
+    min_value=INITIAL_PROPOSAL_LOCK_TIME+1,
+    max_value=SECONDS_1Y
 ))
 def test_withdraw(a, ics, lockerSwap, lockerWeights, delay):
     chain.sleep(delay)
@@ -21,12 +21,12 @@ def test_withdraw(a, ics, lockerSwap, lockerWeights, delay):
         start_bal = ics.rsr.balanceOf(proposer)
         locker.withdraw({"from": proposer})
 
-        assert ics.rsr.balanceOf(proposer) == start_bal + consts.INITIAL_RSR_AMOUNT_TO_LOCK
+        assert ics.rsr.balanceOf(proposer) == start_bal + INITIAL_RSR_AMOUNT_TO_LOCK
         assert ics.rsr.balanceOf(locker.address) == 0
 
 
 # Should revert if not enough time (30d) has passed
-@given(delay=strategy("uint256", max_value=consts.INITIAL_PROPOSAL_LOCK_TIME))
+@given(delay=strategy("uint256", max_value=INITIAL_PROPOSAL_LOCK_TIME))
 def test_withdraw_revert_time(a, ics, lockerSwap, lockerWeights, delay):
     chain.sleep(delay)
 

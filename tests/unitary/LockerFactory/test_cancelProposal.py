@@ -1,4 +1,4 @@
-import consts
+from consts import *
 from brownie import a, reverts, chain
 from brownie.test import given, strategy
 from cancelAndUnlock_fn import cancelAndUnlock
@@ -13,17 +13,17 @@ from cancelAndUnlock_fn import cancelAndUnlock
 # test_cancelAndUnlock_as_proposer
 def test_cancelAndUnlock_as_owner(a, ics, lockerSwap, lockerWeights):
     for locker in [ics.lockerSwap, ics.lockerWeights]:
-        cancelAndUnlock(a, ics, locker, ics.manager.owner(), "Created")
+        cancelAndUnlock(a, ics, locker, ics.manager.owner(), CREATED)
 
 
 def test_cancelAndUnlock_as_operator(a, ics, lockerSwap, lockerWeights):
     for locker in [ics.lockerSwap, ics.lockerWeights]:
-        cancelAndUnlock(a, ics, locker, ics.manager.operator(), "Created")
+        cancelAndUnlock(a, ics, locker, ics.manager.operator(), CREATED)
 
 
 def test_cancelAndUnlock_as_proposer(a, ics, lockerSwap, lockerWeights):
     for locker in [ics.lockerSwap, ics.lockerWeights]:
-        cancelAndUnlock(a, ics, locker, locker.proposer(), "Created")
+        cancelAndUnlock(a, ics, locker, locker.proposer(), CREATED)
 
 
 # Cancelling should revert for all callers except proposer, owner, and operator
@@ -32,7 +32,7 @@ def test_cancelAndUnlock_as_proposer(a, ics, lockerSwap, lockerWeights):
 def test_cancelAndUnlock_revert_signer(a, ics, lockerSwap, lockerWeights):
     for locker in [ics.lockerSwap, ics.lockerWeights]:
         # Because we can't use @given here for some reason. Actual length 10
-        some_accounts = a[:consts.MAX_NUM_TEST_REPS]
+        some_accounts = a[:MAX_NUM_TEST_REPS]
         accounts_to_exclude = [ics.manager.owner(), ics.manager.operator(), locker.proposer()]
         for signer in [addr for addr in some_accounts if addr not in accounts_to_exclude]:
             with reverts("wrong signer"):

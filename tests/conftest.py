@@ -1,6 +1,6 @@
 from brownie import *
 import pytest
-import consts
+from consts import *
 from deploy_ics import deploy_ics
 
 
@@ -25,7 +25,7 @@ def ics():
 @pytest.fixture(scope="module")
 def lockerSwap(ics):
     proposer = a[2]
-    ics.rsr.approve(ics.locker_factory.address, consts.INITIAL_RSR_AMOUNT_TO_LOCK, {"from": proposer})
+    ics.rsr.approve(ics.locker_factory.address, INITIAL_RSR_AMOUNT_TO_LOCK, {"from": proposer})
     amount_to_swap = 1e7
     ics.other_sc_a.approve(ics.manager.address, amount_to_swap, {"from": proposer})
 
@@ -46,7 +46,7 @@ def lockerSwap(ics):
 @pytest.fixture(scope="module")
 def lockerWeights(ics):
     proposer = a[2]
-    ics.rsr.approve(ics.locker_factory.address, consts.INITIAL_RSR_AMOUNT_TO_LOCK, {"from": proposer})
+    ics.rsr.approve(ics.locker_factory.address, INITIAL_RSR_AMOUNT_TO_LOCK, {"from": proposer})
 
     # Since the basket weights are the same pre and post proposal, we can use this
     amounts = ics.manager.toIssue(ics.rsv.totalSupply())
@@ -57,7 +57,7 @@ def lockerWeights(ics):
 
     lockAndProposeWeightsTx = ics.locker_factory.lockAndProposeWeights(
         [ics.other_sc_a, ics.other_sc_b, ics.other_sc_c],
-        consts.BASKET_WEIGHTS,
+        BASKET_WEIGHTS,
         {"from": proposer}
     )
 

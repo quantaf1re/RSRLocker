@@ -1,4 +1,4 @@
-import consts
+from consts import *
 from brownie import a, reverts
 from brownie.test import given, strategy
 
@@ -7,7 +7,7 @@ from brownie.test import given, strategy
 
 # setRSR
 
-@given(new_RSR_addr=strategy("address", exclude=consts.ZERO_ADDRESS))
+@given(new_RSR_addr=strategy("address", exclude=ZERO_ADDRESS))
 def test_setRSR(a, ics, new_RSR_addr):
     old_RSR_addr = ics.locker_factory.RSR()
     tx = ics.locker_factory.setRSR(new_RSR_addr, {"from": a[0]})
@@ -21,7 +21,7 @@ def test_setRSR(a, ics, new_RSR_addr):
 
 def test_setRSR_revert(a, ics):
     with reverts("invalid address"):
-        ics.locker_factory.setRSR(consts.ZERO_ADDRESS, {"from": a[0]})
+        ics.locker_factory.setRSR(ZERO_ADDRESS, {"from": a[0]})
 
 
 # setLockTime
@@ -64,7 +64,7 @@ def test_setRSRAmountToLock_revert(a, ics):
 
 # setManager
 
-@given(new_manager_addr=strategy("address", exclude=consts.ZERO_ADDRESS))
+@given(new_manager_addr=strategy("address", exclude=ZERO_ADDRESS))
 def test_setManager(a, ics, new_manager_addr):
     old_manager_addr = ics.locker_factory.manager()
     tx = ics.locker_factory.setManager(new_manager_addr, {"from": a[0]})
@@ -78,13 +78,13 @@ def test_setManager(a, ics, new_manager_addr):
 
 def test_setManager_revert(a, ics):
     with reverts("invalid address"):
-        ics.locker_factory.setManager(consts.ZERO_ADDRESS, {"from": a[0]})
+        ics.locker_factory.setManager(ZERO_ADDRESS, {"from": a[0]})
 
 
 # ||||||||||||||||||||||| this should work but doesn't? |||||||||||||||||||||||
 # @given(
 #     from_addr=strategy("address", exclude=a[0]),
-#     new_RSR_addr=strategy("address", exclude=consts.ZERO_ADDRESS)
+#     new_RSR_addr=strategy("address", exclude=ZERO_ADDRESS)
 # )
 # def test_setRSR_revert_from(a, ics, from_addr, new_RSR_addr):
 #     with reverts():

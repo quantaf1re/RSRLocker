@@ -5,7 +5,7 @@ from consts import *
 
 # Change settings as desired
 # default = {"stateful_step_count": 10, "max_examples": 50}
-settings = {"stateful_step_count": 30, "max_examples": 50}
+settings = {"stateful_step_count": 50, "max_examples": 50}
 
 
 def test_stateful_all_proposals(ICs, state_machine, Locker, a):
