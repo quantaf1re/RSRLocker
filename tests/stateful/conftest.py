@@ -53,7 +53,7 @@ class _ICs():
             token_to_vault.increaseAllowance(self.ics.manager.address, amount_to_swap, {"from": proposer})
 
             return self.ics.locker_factory.lockAndProposeSwap(
-                [token_to_vault.address, token_out_vault.address],
+                [token_out_vault.address, token_to_vault.address],
                 [amount_to_swap, amount_to_swap],
                 [False, True],
                 {"from": proposer}
