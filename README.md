@@ -28,7 +28,7 @@ Because some contracts from RSR and RSV-V2 have the same name, it caused a names
  - integration tests
  - stateful test
 
-All tests pass
+All tests pass (it takes roughly 15m for stateful and 10m for non-stateful)
 
 ### MythX:
 No issues found other than mentioning that the solidity version used (`0.5.7`) is outdated and that time used in the contracts, such as `now`, can be manipulated to a certain extent by malicious miners. Since the system is already fine with using time to measure 24h, it's fine for me to use it to measure 30d.
