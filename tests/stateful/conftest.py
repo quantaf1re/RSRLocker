@@ -15,6 +15,7 @@ class _ICs():
         cls.ics = deploy_ics()
 
 
+    # Atomically change balances
     def transfer_bals(self, bals, from_addr, to, amount):
         bals[str(from_addr)] -= amount
         if str(to) in bals:
@@ -147,6 +148,11 @@ class _ICs():
             with reverts():
                 self.ics.manager.acceptProposal(proposal_id, {"from": signer})
 
+    # Call execute_proposal is:
+    #  - the proposal exists
+    #  - the proposal is accepted
+    #  - the signer is the operator
+    #  - 24h have passed from acceptance
     def execute_proposal(self, proposal_id, signer):
         if (proposal_id in self.id_to_state and
                 self.id_to_state[proposal_id] == ACCEPTED and
@@ -160,6 +166,8 @@ class _ICs():
             with reverts():
                 self.ics.manager.executeProposal(proposal_id, {"from": signer})
 
+    # Call withdraw if:
+    #  - 30d have passed
     def withdraw(self, proposal_id, signer):
         if proposal_id in self.id_to_locker and chain.time() - self.id_to_locker[proposal_id].startTime() > self.ics.locker_factory.lockTime():
             locker = self.id_to_locker[proposal_id]

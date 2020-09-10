@@ -5,7 +5,7 @@ from consts import *
 
 # Change settings as desired
 # default = {"stateful_step_count": 10, "max_examples": 50}
-settings = {"stateful_step_count": 30, "max_examples": 100}
+settings = {"stateful_step_count": 30, "max_examples": 50}
 
 
 def test_stateful_all_proposals(ICs, state_machine, Locker, a):
@@ -27,13 +27,11 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
         def setup(self):
             # Gonna have to use `str()` on keys otherwise we get
             # `TypeError: unhashable type: 'EthAddress'` when inputing contracts
-            # and `No account exists for ___` when using accounts
+            # and `No account exists for ___` when using contracts as accounts
             self.rsr_bals = {str(ac): 10**47 for ac in self.a}
             self.id_to_state = {}
             self.id_to_start_time = {}
             self.id_to_locker = {}
-
-            self.test_arr = []
 
 
         # ---------------------- Rules ----------------------
