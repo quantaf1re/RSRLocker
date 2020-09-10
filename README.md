@@ -2,6 +2,8 @@
 
 The `master` branch doesn't contain any of my changes - only the original `rsr` and `rsv-v2` repos put into the same repo. This was done so that changes I made are easier to see in the PR from `addLocker` to `master`.
 
+I also added `oldProjectIncentiveProposalsProof.pdf` to this repo incase you're interested, which is the proof of why the previous project proposal of incentivising RSV transactions with a set amount of RSR per unit time in a zero sum game is exploitable and won't work. Spoiler: tractor go brrr 🤠
+
 ## Design choices
 I chose to route all the new logic through `LockerFactory`, which manifested in adding a new modifier `onlyLockerFactory` to `proposeSwap`, `proposeWeights`, and `cancelProposal` in `Manager`, which forces those functions to only be able to be called by `lockAndProposeSwap`, `lockAndProposeWeights`, and `cancelAndUnlock` respectively. This was partly because the changes to `Manager` were to be as minimal as possible, but mainly because it forces the creation and cancellation of proposals to be atomic and guarantees that `LockerFactory` always knows about proposal changes that are relevant to RSR being locked up, which reduces the complexity and attack surface, therefore making the system more secure. No checks on any RSR balances are needed in `Manager` because it is guaranteed that RSR has been locked up by `LockerFactory` in a new `Locker`. Cancellation can happen even if a proposer has already withdrawn their RSR (after the 30d).
 
