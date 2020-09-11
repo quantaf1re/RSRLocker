@@ -47,7 +47,8 @@ class _ICs():
         enough_tokens_proposer = (token_to_vault.allowance(proposer, self.ics.manager.address) +
             amount_to_swap <= token_to_vault.balanceOf(proposer))
         # Check whether the vault has enough tokens to swap when executed
-        enough_tokens_vault = token_out_vault.balanceOf(self.ics.manager.trustedVault())
+        enough_tokens_vault = (token_out_vault.balanceOf(self.ics.manager.trustedVault())
+            >= amount_to_swap)
         enough_rsr = (self.ics.rsr.allowance(proposer, self.ics.manager.address) +
                 self.ics.locker_factory.RSRAmountToLock() <=
                 self.ics.rsr.balanceOf(proposer))
