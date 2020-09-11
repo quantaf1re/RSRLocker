@@ -8,6 +8,8 @@ from consts import *
 settings = {"stateful_step_count": 50, "max_examples": 50}
 
 
+# Note: rarely this test fails because of a timeout error which is a bug in
+# brownie.
 def test_stateful_all_proposals(ICs, state_machine, Locker, a):
 
     """
