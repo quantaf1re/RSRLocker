@@ -73,10 +73,18 @@ class _ICs():
                 {"from": proposer}
             )
 
+        # A quirk of the original Manager's behaviour is that proposals can be
+        # proposed and accepted even if executing that proposal would revert
+        # because the proposer doesn't have enough tokens or the vault doesn't
+        # have enough tokens. Since that's not behaviour that was introduced
+        # in this project, it's outside the scope of this to test it, and it's
+        # simpler to ignore it by not allowing non-executable proposals to be
+        # proposed.
         if enough_tokens_proposer and enough_tokens_vault and enough_rsr:
             tx = do_tx()
             self.register_created_locker(proposer, tx)
-        else:
+
+        elif not enough_rsr:
             with reverts():
                 do_tx()
 
@@ -115,7 +123,7 @@ class _ICs():
         if enough_tokens and enough_rsr:
             tx = do_tx()
             self.register_created_locker(proposer, tx)
-        else:
+        elif not enough_rsr:
             with reverts():
                 do_tx()
 
@@ -187,6 +195,7 @@ class _ICs():
                 self.ics.manager.executeProposal(proposal_id, {"from": signer})
 
     # Call withdraw if:
+    #  - proposal exists
     #  - 30d have passed
     def withdraw(self, proposal_id, signer):
         if (proposal_id in self.id_to_locker and
@@ -214,51 +223,3 @@ class _ICs():
 @pytest.fixture
 def ICs():
     yield _ICs
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
