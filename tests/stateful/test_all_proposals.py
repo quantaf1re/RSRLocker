@@ -9,7 +9,8 @@ settings = {"stateful_step_count": 50, "max_examples": 50}
 
 
 # Note: rarely this test fails because of a timeout error which is a bug in
-# brownie.
+# brownie - it complains that `data generation is inconsistent` which is a
+# result of the timeout.
 def test_stateful_all_proposals(ICs, state_machine, Locker, a):
 
     """
