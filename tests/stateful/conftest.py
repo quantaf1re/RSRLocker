@@ -1,6 +1,6 @@
 import pytest
 from deploy_ics import deploy_ics
-from brownie import a, reverts, chain, Locker
+from brownie import a, reverts, chain, Locker, SwapProposal, WeightProposal, BasicERC20, Basket
 from consts import *
 
 class _ICs():
@@ -24,12 +24,17 @@ class _ICs():
             bals[str(to)] = amount
 
     # Put info on the new locker in the local caches
-    def register_created_locker(self, proposer, tx):
+    def register_created_locker(self, proposer, tx, is_swap):
         locker = Locker.at(tx.return_value)
         proposal_id = self.ics.locker_factory.lockerAddrToProposalID(locker.address)
         self.id_to_state[proposal_id] = CREATED
         self.id_to_start_time[proposal_id] = tx.timestamp
         self.id_to_locker[proposal_id] = locker
+        self.id_to_proposal_is_swap[proposal_id] = is_swap
+        if is_swap:
+            self.id_to_proposal[proposal_id] = SwapProposal.at(self.ics.manager.trustedProposals(proposal_id))
+        else:
+            self.id_to_proposal[proposal_id] = WeightProposal.at(self.ics.manager.trustedProposals(proposal_id))
         self.transfer_bals(
             self.rsr_bals,
             proposer,
@@ -83,7 +88,7 @@ class _ICs():
         # proposed.
         if enough_tokens_proposer and enough_tokens_vault and enough_rsr:
             tx = do_tx()
-            self.register_created_locker(proposer, tx)
+            self.register_created_locker(proposer, tx, True)
 
         elif not enough_rsr:
             with reverts():
@@ -123,7 +128,7 @@ class _ICs():
 
         if enough_tokens and enough_rsr:
             tx = do_tx()
-            self.register_created_locker(proposer, tx)
+            self.register_created_locker(proposer, tx, False)
         elif not enough_rsr:
             with reverts():
                 do_tx()
@@ -184,6 +189,7 @@ class _ICs():
     #  - 24h have passed from acceptance
     def execute_proposal(self, proposal_id, signer):
         if (proposal_id in self.id_to_state and
+                self.has_tokens(proposal_id) and
                 self.id_to_state[proposal_id] == ACCEPTED and
                 signer == self.ics.manager.operator() and
                 chain.time() - self.id_to_accept_time[proposal_id] > SECONDS_24H):
@@ -194,6 +200,48 @@ class _ICs():
         else:
             with reverts():
                 self.ics.manager.executeProposal(proposal_id, {"from": signer})
+
+    # Checks whether the proposer and the current vault have enough tokens
+    # for a given proposal to execute successfully
+    def has_tokens(self, proposal_id):
+        vault_addr = self.ics.manager.trustedVault()
+        proposer = self.id_to_locker[proposal_id].proposer()
+        proposal = self.id_to_proposal[proposal_id]
+
+        if self.id_to_proposal_is_swap[proposal_id]:
+            vault_has_enough = True
+            proposer_has_enough = True
+            # Since there's no way to get the length of an array outside the
+            # contract, I'm relying on the fact that the length is always 2 here
+            for i in range(2):
+                token = BasicERC20.at(proposal.tokens(i))
+                amount = proposal.amounts(i)
+                if proposal.toVault(i) == True:
+                    proposer_has_enough = (proposer_has_enough and
+                        token.balanceOf(proposer) >= amount and
+                        token.allowance(proposer, self.ics.manager) >= amount)
+                else:
+                    vault_has_enough = (vault_has_enough and
+                        token.balanceOf(vault_addr) >= amount)
+
+            return vault_has_enough and proposer_has_enough
+
+        else:
+            proposer_has_enough = True
+            basket = Basket.at(proposal.trustedBasket())
+            # Since the scope here is only to test new functionality, we can
+            # just only test with the same weights but different tokens, so
+            # amounts are the same
+            amounts = self.ics.manager.toIssue(self.ics.rsv.totalSupply())
+            tokens = basket.getTokens()
+            for i in range(len(tokens)):
+                token = BasicERC20.at(basket.tokens(i))
+                proposer_has_enough = (proposer_has_enough and
+                    token.balanceOf(proposer) > amounts[i])
+
+            return proposer_has_enough
+
+
 
     # Call withdraw if:
     #  - proposal exists

@@ -36,6 +36,8 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
             self.id_to_locker = {}
             self.id_to_start_time = {}
             self.id_to_accept_time = {}
+            self.id_to_proposal_is_swap = {}
+            self.id_to_proposal = {}
 
 
         # ---------------------- Rules ----------------------
@@ -144,11 +146,7 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
 
         def invariant_states(self):
             for proposal_id, state in self.id_to_state.items():
-                # This will instantiate some `WeightProposal`s as `SwapProposal`s
-                # but since we're only testing `state`, which is common to both
-                # by definition, it's fine
-                proposal = SwapProposal.at(self.ics.manager.trustedProposals(proposal_id))
-                assert proposal.state() == STATE_TO_NUM[state]
+                assert self.id_to_proposal[proposal_id].state() == STATE_TO_NUM[state]
 
 
     state_machine(StateMachine, a, settings=settings)
