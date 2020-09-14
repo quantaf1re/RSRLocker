@@ -41,6 +41,9 @@ def test_stateful_all_proposals(ICs, state_machine, Locker, a):
 
 
         # ---------------------- Rules ----------------------
+        # Multiple rules of each proposal type were used for the sake of variety,
+        # so multiple versions of the other rules were make to increase their
+        # frequency and increase the chances of meaningful combinations
 
         # proposeSwap
 
