@@ -1,3 +1,7 @@
+# Challenge
+This repo is a coding challenge from Reserve to increase the security of their system by forcing RSR tokens to be locked up whenever someone makes a proposal to change the reserve.
+
+
 # RSRLocker
 
 The `master` branch doesn't contain any of my changes - only the original `rsr` and `rsv-v2` repos put into the same repo. This was done so that changes I made are easier to see in the PR from `addLocker` to `master`.
